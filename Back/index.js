@@ -1,26 +1,28 @@
-import  Express  from "express";
+import express from "express";
 import bodyParser from "body-parser";
 import connection from "./db/index.js";
 import path from "path"
+import Post from "./db/models/post.js";
 
 
-const app = Express()
+const app = express()
 app.use(bodyParser.json())
-app.use(Express.static(path.join("../front" , "dist")))
+app.use(express.static(path.join("../front", "dist")))
 
-app.get("/" , (req,res) => {
-const indexPath = path.resolve("../front" , "dist" , "index.html")
-res.sendFile(indexPath)
+app.get("/", (req, res) => {
+    const indexPath = path.resolve("../front", "dist", "index.html")
+    res.sendFile(indexPath)
 })
 
-app.post("/" , (req , res) => {
+
+
+app.post("/api/addPost", async (req, res) => {
     let data = req.body
-
-    
-    console.log(req.body)
-    req.send(data)
+    console.log(data)
+    const postData = new Post(data)
+    await postData.save()
 })
-
+// app.get("/api/posts")
 connection.then(() => {
     app.listen(3000, () => console.log("server connected"))
 
